@@ -10,7 +10,6 @@ export const NEXT_AUTH = {
       },
       async authorize(credentials: any) {
         const email = credentials.email;
-        console.log(email);
 
         //find user in the db
         let user;
