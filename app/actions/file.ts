@@ -9,6 +9,14 @@ export async function getFiles(userId: string | undefined) {
   return files;
 }
 
+export async function getFile(fileId: string) {
+  const file = await db.file.findUnique({
+    where: {
+      id: fileId,
+    },
+  });
+  return file;
+}
 export async function deleteFile(fileId: string | undefined) {
   const res = await db.file.delete({
     where: {
