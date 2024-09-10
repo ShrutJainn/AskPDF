@@ -1,5 +1,5 @@
 import { getFile } from "@/app/actions/file";
-import { NEXT_AUTH } from "@/app/lib/auth";
+import { NEXT_AUTH } from "@/lib/auth";
 import ChatWrapper from "@/components/ChatWrapper";
 import PdfRenderer from "@/components/PdfRenderer";
 import { getServerSession } from "next-auth";
