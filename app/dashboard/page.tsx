@@ -99,7 +99,7 @@ function Page() {
                     </div>
                     <div className=" flex items-center gap-2">
                       <MessageSquare className=" h-4 w-4" />
-                      {file.url}
+                      {file.url.slice(0, 15)}...
                     </div>
                     <Button
                       size="sm"
