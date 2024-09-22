@@ -43,3 +43,17 @@ export async function getFileByKey(key: string) {
 
   return file;
 }
+
+export async function getFileUploadStatus(fileId: string | undefined) {
+  const session = await getServerSession(NEXT_AUTH);
+  const file = await db.file.findFirst({
+    where: {
+      id: fileId,
+      userId: session.user.id,
+    },
+  });
+
+  if (!file) return { status: "PENDING" as const };
+
+  return { status: file.uploadStatus };
+}

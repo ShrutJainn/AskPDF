@@ -3,6 +3,11 @@ import { NEXT_AUTH } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
+import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
+import { OpenAIEmbeddings } from "@langchain/openai";
+import { PineconeStore } from "@langchain/pinecone";
+import { pinecone } from "@/lib/pinecone";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const f = createUploadthing();
 
@@ -24,6 +29,49 @@ export const ourFileRouter = {
           uploadStatus: "PROCESSING",
         },
       });
+
+      //index the pdf file
+      try {
+        const response = await fetch(file.url);
+        const blob = await response.blob();
+        //load the pdf in memory
+        const loader = new PDFLoader(blob);
+
+        //extract the page level text
+        const pageLevelDocs = await loader.load();
+        const pagesAmt = pageLevelDocs.length; // number of pages in pdf
+
+        //vectorise and index the entire document
+        //@ts-ignore
+        const pineconeIndex = pinecone.Index("ask-pdf");
+        const embeddings = new OpenAIEmbeddings({
+          openAIApiKey: process.env.OPENAI_API_KEY,
+        }); //openAiEmbeddings to turn the text to vector of numbers
+
+        await PineconeStore.fromDocuments(pageLevelDocs, embeddings, {
+          pineconeIndex,
+          namespace: createdFile.id,
+        });
+
+        await db.file.update({
+          data: {
+            uploadStatus: "SUCCESS",
+          },
+          where: {
+            id: createdFile.id,
+          },
+        });
+      } catch (error) {
+        console.log(error);
+        await db.file.update({
+          data: {
+            uploadStatus: "FAILED",
+          },
+          where: {
+            id: createdFile.id,
+          },
+        });
+      }
     }),
 } satisfies FileRouter;
 
