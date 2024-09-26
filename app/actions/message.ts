@@ -1,118 +1,63 @@
+"use server";
+
+import { INFINITE_QUERY_LIMIT } from "@/config/infinite-query";
 import { db } from "@/db";
 import { NEXT_AUTH } from "@/lib/auth";
+import { MessagePropsSchema } from "@/lib/validators/MessagePropsValidator";
 import { getServerSession } from "next-auth";
-import { OpenAIEmbeddings } from "@langchain/openai";
-import { pinecone } from "@/lib/pinecone";
-import { PineconeStore } from "@langchain/pinecone";
-import { openai } from "@/lib/openai";
-import { OpenAIStream, StreamingTextResponse } from "ai";
+import { z } from "zod";
 
-export async function sendMessageApi({
-  fileId,
-  message,
-}: {
-  fileId: string;
-  message: string;
-}) {
+type MessageProps = z.infer<typeof MessagePropsSchema>;
+
+export async function getFileMessages({ fileId, limit, cursor }: MessageProps) {
   try {
-    console.log(fileId, message);
-    const session = await getServerSession(NEXT_AUTH);
-    const userId = session.user.id;
-    if (!userId) throw new Error("Unauthorized");
+    const queryLimit = limit ?? INFINITE_QUERY_LIMIT;
 
-    const file = await db.file.findUnique({
+    const file = await db.file.findFirst({
       where: {
         id: fileId,
-        userId,
       },
     });
-    if (!file) throw new Error("File not found");
-    await db.message.create({
-      data: {
-        text: message,
-        isUserMessage: true,
-        userId,
-        fileId,
-      },
-    });
+    if (!file) throw new Error("NOT FOUND");
 
-    // vectorise the message
-    const embeddings = new OpenAIEmbeddings({
-      openAIApiKey: process.env.OPENAI_API_KEY,
-    });
-    //@ts-ignore
-    const pineconeIndex = pinecone.Index("ask-pdf");
-
-    const vectorStore = await PineconeStore.fromExistingIndex(embeddings, {
-      pineconeIndex,
-      namespace: file?.id,
-    });
-
-    const res = await vectorStore.similaritySearch(message, 4);
-
-    const prevMessages = await db.message.findMany({
+    const messages = await db.message.findMany({
+      // take: queryLimit + 1,
       where: {
         fileId,
       },
       orderBy: {
         createdAt: "asc",
       },
-      take: 6,
-    });
-
-    const formattedPrevMessages = prevMessages.map((message) => ({
-      role: message.isUserMessage ? ("user" as const) : ("assistant" as const),
-      content: message.text,
-    }));
-    //@ts-ignore
-    const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      temperature: 0,
-      stream: true,
-      messages: [
-        {
-          role: "system",
-          content:
-            "Use the following pieces of context (or previous conversaton if needed) to answer the users question in markdown format.",
-        },
-        {
-          role: "user",
-          content: `Use the following pieces of context (or previous conversaton if needed) to answer the users question in markdown format. \nIf you don't know the answer, just say that you don't know, don't try to make up an answer.
-          
-    \n----------------\n
-    
-    PREVIOUS CONVERSATION:
-    ${formattedPrevMessages.map((message) => {
-      if (message.role === "user") return `User: ${message.content}\n`;
-      return `Assistant: ${message.content}\n`;
-    })}
-    
-    \n----------------\n
-    
-    CONTEXT:
-    ${res.map((r) => r.pageContent).join("\n\n")}
-    
-    USER INPUT: ${message}`,
-        },
-      ],
-    });
-
-    //stream messages back
-    const stream = OpenAIStream(response, {
-      async onCompletion(completion) {
-        await db.message.create({
-          data: {
-            text: completion,
-            isUserMessage: false,
-            fileId,
-            userId,
-          },
-        });
+      // cursor: cursor ? { id: cursor } : undefined, //infinit query
+      select: {
+        id: true,
+        isUserMessage: true,
+        createdAt: true,
+        text: true,
       },
     });
 
-    return new StreamingTextResponse(stream);
-  } catch (error) {
-    return { error: error };
+    let nextCursor: typeof cursor | undefined = undefined;
+
+    // if (messages.length > queryLimit) {
+    //   const nextItem = messages.pop();
+    //   nextCursor = nextItem?.id;
+    // }
+    return { messages, nextCursor };
+  } catch (error: any) {
+    console.log(error);
+    throw new Error(error);
   }
+}
+
+export async function getLatestAiResponse(fileId: string) {
+  const message = await db.message.findFirst({
+    where: {
+      fileId,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+  return message;
 }

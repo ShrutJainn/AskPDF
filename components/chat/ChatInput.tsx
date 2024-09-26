@@ -3,10 +3,13 @@ import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
 import { useContext, useRef } from "react";
 import { ChatContext } from "./ChatContext";
+import { useSetRecoilState } from "recoil";
+import { messageAtom } from "@/atoms/messageAtom";
 
 function ChatInput({ isDisabled }: { isDisabled?: boolean }) {
   const { addMessage, handleInputChange, isLoading, message } =
     useContext(ChatContext);
+  const setMessages = useSetRecoilState(messageAtom);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   return (
@@ -25,6 +28,15 @@ function ChatInput({ isDisabled }: { isDisabled?: boolean }) {
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
+                    //@ts-ignore
+                    setMessages((prev) => [
+                      ...prev,
+                      {
+                        text: message,
+                        isUserMessage: true,
+                        createdAt: new Date(),
+                      },
+                    ]);
                     addMessage();
                     textareaRef.current?.focus();
                   }
@@ -32,17 +44,23 @@ function ChatInput({ isDisabled }: { isDisabled?: boolean }) {
                 className=" resize-none pr-12 text-base py-3 scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch"
                 placeholder=" Enter your question..."
               />
-              {/* <input
-                placeholder="Enter your question..."
-                onChange={handleInputChange}
-                value={message}
-              /> */}
+
               <Button
                 disabled={isLoading || isDisabled}
                 type="submit"
                 onClick={(e) => {
                   e.preventDefault();
+                  //@ts-ignore
+                  setMessages((prev) => [
+                    ...prev,
+                    {
+                      text: message,
+                      isUserMessage: true,
+                      createdAt: new Date(),
+                    },
+                  ]);
                   addMessage();
+                  textareaRef.current?.focus();
                 }}
                 aria-label="Send message"
                 className=" absolute bottom-1.5 right-[8px]"
@@ -50,6 +68,7 @@ function ChatInput({ isDisabled }: { isDisabled?: boolean }) {
                 <Send className=" h-4 w-4" />
               </Button>
             </div>
+            {/* <Button className=" mt-4 h-12">Clear chats</Button> */}
           </div>
         </div>
       </form>

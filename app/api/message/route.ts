@@ -101,10 +101,10 @@ export const POST = async (req: NextRequest) => {
       },
     ],
   });
-
+  let newMessage;
   const stream = OpenAIStream(response, {
     async onCompletion(completion) {
-      await db.message.create({
+      newMessage = await db.message.create({
         data: {
           text: completion,
           isUserMessage: false,
@@ -114,6 +114,5 @@ export const POST = async (req: NextRequest) => {
       });
     },
   });
-
   return new StreamingTextResponse(stream);
 };
