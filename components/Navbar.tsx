@@ -1,12 +1,17 @@
-"use client";
-
 import Link from "next/link";
 import MaxWidthWrapper from "./MaxWidthWrapper";
 import { buttonVariants } from "./ui/button";
 import { Button } from "./ui/button";
 import { ArrowRight } from "lucide-react";
 import { signIn } from "next-auth/react";
-function Navbar() {
+import UserAccountNav from "./UserAccountNav";
+import { getServerSession } from "next-auth";
+import { NEXT_AUTH } from "@/lib/auth";
+import LoginButton from "./LoginButton";
+import AuthButton from "./AuthButton";
+async function Navbar() {
+  const session = await getServerSession(NEXT_AUTH);
+  const user = session?.user;
   return (
     <nav className=" sticky h-14 inset-x-0 z-30 w-full border-b border-gray-200 bg-white/75 backdrop-blur-lg transition-all ">
       <MaxWidthWrapper>
@@ -18,33 +23,44 @@ function Navbar() {
           {/* todo : add mobile navbar */}
 
           <div className=" hidden items-center space-x-4 sm:flex">
-            <>
-              <Link
-                className={buttonVariants({
-                  variant: "ghost",
-                  size: "sm",
-                })}
-                href="/pricing"
-              >
-                Pricing
-              </Link>
-              <Button
-                onClick={() => signIn()}
-                className={buttonVariants({
-                  variant: "ghost",
-                  size: "sm",
-                })}
-              >
-                Sign In
-              </Button>
-              <Button
-                className={buttonVariants({
-                  size: "sm",
-                })}
-              >
-                Get Started <ArrowRight className=" ml-1.5 h-5 w-5" />
-              </Button>
-            </>
+            {!user ? (
+              <>
+                <Link
+                  className={buttonVariants({
+                    variant: "ghost",
+                    size: "sm",
+                  })}
+                  href="/pricing"
+                >
+                  Pricing
+                </Link>
+                <AuthButton type="login" />
+                <Button
+                  className={buttonVariants({
+                    size: "sm",
+                  })}
+                >
+                  Get Started <ArrowRight className=" ml-1.5 h-5 w-5" />
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link
+                  className={buttonVariants({
+                    variant: "ghost",
+                    size: "sm",
+                  })}
+                  href="/dashboard"
+                >
+                  Dashboard
+                </Link>
+                <UserAccountNav
+                  name={!user.name ? "Your Account" : user.name}
+                  email={user.email ?? ""}
+                  imageUrl={user.image ?? ""}
+                />
+              </>
+            )}
           </div>
         </div>
       </MaxWidthWrapper>
