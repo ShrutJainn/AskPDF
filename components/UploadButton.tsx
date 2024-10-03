@@ -11,12 +11,14 @@ import { useToast } from "./ui/use-toast";
 import { getFile, getFileByKey } from "@/app/actions/file";
 import { useRouter } from "next/navigation";
 
-function UploadDropzone() {
+function UploadDropzone({ isSubscribed }: { isSubscribed: boolean }) {
   const [uploading, setUploading] = useState<boolean>(false);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const router = useRouter();
   const { toast } = useToast();
-  const { startUpload } = useUploadThing("pdfUploader");
+  const { startUpload } = useUploadThing(
+    isSubscribed ? "proPlanUploader" : "freePlanUploader"
+  );
 
   async function pollForFile(key: string, interval = 1000) {
     try {
@@ -56,10 +58,23 @@ function UploadDropzone() {
       onDrop={async (acceptedFile) => {
         setUploading(true);
         const progressInterval = startSimulatedProgress();
+        console.log(acceptedFile);
+        const maxSize = isSubscribed ? 16000000 : 4000000;
+        if (acceptedFile[0].size > maxSize) {
+          clearInterval(progressInterval);
+          return toast({
+            title: "Invalid Size",
+            description: `Please upload PDFs upto ${
+              isSubscribed ? "16" : "4"
+            }MBs`,
+            variant: "destructive",
+          });
+        }
 
         //handle file uploading
         const res = await startUpload(acceptedFile);
         if (!res) {
+          clearInterval(progressInterval);
           return toast({
             title: "Something went wrong",
             description: "Please try again later",
@@ -101,7 +116,9 @@ function UploadDropzone() {
                     <span className=" font-semibold">Click to upload</span> or
                     drag and drop
                   </p>
-                  <p className=" text-xs text-zinc-500">PDF (up to 4MB)</p>
+                  <p className=" text-xs text-zinc-500">
+                    PDF (up to {isSubscribed ? "16MB" : "4MB"})
+                  </p>
                 </div>
 
                 {acceptedFiles && acceptedFiles[0] ? (
@@ -148,7 +165,7 @@ function UploadDropzone() {
   );
 }
 
-function UploadButton() {
+function UploadButton({ isSubscribed }: { isSubscribed: boolean }) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   return (
@@ -164,7 +181,7 @@ function UploadButton() {
         <Button>Upload PDF</Button>
       </DialogTrigger>
       <DialogContent>
-        <UploadDropzone />
+        <UploadDropzone isSubscribed={isSubscribed} />
       </DialogContent>
     </Dialog>
   );

@@ -16,7 +16,6 @@ import UpgradeButton from "@/components/UpgradeButton";
 
 async function PricingPage() {
   const session = await getServerSession(NEXT_AUTH);
-  const { user } = session;
 
   const pricingItems = [
     {
@@ -168,16 +167,16 @@ async function PricingPage() {
                   <div className=" p-5">
                     {plan === "Free" ? (
                       <Link
-                        href={user ? "/dashboard" : "/api/auth/signup"}
+                        href={session ? "/dashboard" : "/api/auth/signup"}
                         className={buttonVariants({
                           className: "w-full",
                           variant: "secondary",
                         })}
                       >
-                        {user ? "Upgrade now" : "Sign up"}
+                        {session ? "Upgrade now" : "Sign up"}
                         <ArrowRight className=" h-5 w-5 ml-1.5" />
                       </Link>
-                    ) : user ? (
+                    ) : session ? (
                       <UpgradeButton />
                     ) : (
                       <Link
@@ -186,7 +185,7 @@ async function PricingPage() {
                           className: "w-full",
                         })}
                       >
-                        {user ? "Upgrade now" : "Sign up"}
+                        {session ? "Upgrade now" : "Sign up"}
                         <ArrowRight className=" h-5 w-5 ml-1.5" />
                       </Link>
                     )}

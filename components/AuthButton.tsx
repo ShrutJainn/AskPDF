@@ -19,9 +19,7 @@ function AuthButton({ type }: { type: string }) {
   //   );
   return (
     <Button
-      onClick={() => {
-        type === "signout" ? signOut() : signIn();
-      }}
+      onClick={() => (type === "signout" ? signOut() : signIn())}
       className={buttonVariants({
         variant: "ghost",
         size: "sm",

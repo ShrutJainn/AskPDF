@@ -3,12 +3,11 @@ import MaxWidthWrapper from "./MaxWidthWrapper";
 import { buttonVariants } from "./ui/button";
 import { Button } from "./ui/button";
 import { ArrowRight } from "lucide-react";
-import { signIn } from "next-auth/react";
 import UserAccountNav from "./UserAccountNav";
 import { getServerSession } from "next-auth";
 import { NEXT_AUTH } from "@/lib/auth";
-import LoginButton from "./LoginButton";
 import AuthButton from "./AuthButton";
+import MobileNav from "./MobileNav";
 async function Navbar() {
   const session = await getServerSession(NEXT_AUTH);
   const user = session?.user;
@@ -20,7 +19,8 @@ async function Navbar() {
             <span>AskPDF.</span>
           </Link>
 
-          {/* todo : add mobile navbar */}
+          {/* "!!" converts user object to boolean */}
+          <MobileNav isAuth={!!user} />
 
           <div className=" hidden items-center space-x-4 sm:flex">
             {!user ? (

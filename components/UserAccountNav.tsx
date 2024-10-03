@@ -12,8 +12,6 @@ import Image from "next/image";
 import { Icons } from "./Icons";
 import Link from "next/link";
 import { Gem } from "lucide-react";
-import { signOut } from "next-auth/react";
-import LogoutButton from "./LogoutButton";
 import AuthButton from "./AuthButton";
 
 interface UserAccountProps {
