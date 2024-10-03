@@ -17,7 +17,7 @@ import { format } from "date-fns";
 
 interface BillingFormProps {
   subscriptionPlan: Awaited<ReturnType<typeof getUserSubscriptionPlan>>;
-  url: string;
+  url: string | null;
 }
 function BillingForm({ subscriptionPlan, url }: BillingFormProps) {
   const [loading, setLoading] = useState(false);

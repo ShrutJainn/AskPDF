@@ -1,13 +1,8 @@
-"use client";
+import { getUrl } from "../actions/stripe";
 
-import { NEXT_AUTH } from "@/lib/auth";
-import { getServerSession } from "next-auth";
-import { useSession } from "next-auth/react";
-
-function Page() {
-  const { data: session } = useSession();
-  console.log(session?.user.id);
-
+async function Page() {
+  const data = await getUrl();
+  console.log(data);
   return <div>Test</div>;
 }
 

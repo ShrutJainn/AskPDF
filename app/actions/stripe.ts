@@ -24,11 +24,16 @@ export async function getUrl() {
 
   const subscriptionPlan = await getUserSubscriptionPlan();
   if (subscriptionPlan.isSubscribed && dbUser.stripeCustomerId) {
+    // try {
+    console.log(billingUrl);
     const stripeSession = await stripe.billingPortal.sessions.create({
       customer: dbUser.stripeCustomerId,
       return_url: billingUrl,
     });
     return { url: stripeSession.url };
+    // } catch (error) {
+    //   console.error(error);
+    // }
   }
 
   const stripeSession = await stripe.checkout.sessions.create({
