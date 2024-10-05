@@ -1,6 +1,5 @@
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { PLANS } from "@/config/stripe";
-import { NEXT_AUTH } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import {
   Tooltip,
@@ -8,14 +7,15 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { getServerSession } from "next-auth";
 import { ArrowRight, Check, HelpCircle, Minus } from "lucide-react";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import UpgradeButton from "@/components/UpgradeButton";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
 async function PricingPage() {
-  const session = await getServerSession(NEXT_AUTH);
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
 
   const pricingItems = [
     {
@@ -167,25 +167,27 @@ async function PricingPage() {
                   <div className=" p-5">
                     {plan === "Free" ? (
                       <Link
-                        href={session ? "/dashboard" : "/api/auth/signup"}
+                        href={
+                          user ? "/dashboard" : "/auth-callback?origin=pricing"
+                        }
                         className={buttonVariants({
                           className: "w-full",
                           variant: "secondary",
                         })}
                       >
-                        {session ? "Upgrade now" : "Sign up"}
+                        {user ? "Upgrade now" : "Sign up"}
                         <ArrowRight className=" h-5 w-5 ml-1.5" />
                       </Link>
-                    ) : session ? (
+                    ) : user ? (
                       <UpgradeButton />
                     ) : (
                       <Link
-                        href="/api/auth/signin"
+                        href="/auth-callback?origin=pricing"
                         className={buttonVariants({
                           className: "w-full",
                         })}
                       >
-                        {session ? "Upgrade now" : "Sign up"}
+                        {user ? "Upgrade now" : "Sign up"}
                         <ArrowRight className=" h-5 w-5 ml-1.5" />
                       </Link>
                     )}

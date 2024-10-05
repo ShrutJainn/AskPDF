@@ -4,13 +4,14 @@ import { buttonVariants } from "./ui/button";
 import { Button } from "./ui/button";
 import { ArrowRight } from "lucide-react";
 import UserAccountNav from "./UserAccountNav";
-import { getServerSession } from "next-auth";
-import { NEXT_AUTH } from "@/lib/auth";
 import AuthButton from "./AuthButton";
 import MobileNav from "./MobileNav";
+import { LoginLink } from "@kinde-oss/kinde-auth-nextjs/components";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+
 async function Navbar() {
-  const session = await getServerSession(NEXT_AUTH);
-  const user = session?.user;
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
   return (
     <nav className=" sticky h-14 inset-x-0 z-30 w-full border-b border-gray-200 bg-white/75 backdrop-blur-lg transition-all ">
       <MaxWidthWrapper>
@@ -34,7 +35,15 @@ async function Navbar() {
                 >
                   Pricing
                 </Link>
-                <AuthButton type="login" />
+                {/* <AuthButton type="login" /> */}
+                <LoginLink
+                  className={buttonVariants({
+                    variant: "ghost",
+                    size: "sm",
+                  })}
+                >
+                  Sign up
+                </LoginLink>
                 <Button
                   className={buttonVariants({
                     size: "sm",
@@ -55,9 +64,13 @@ async function Navbar() {
                   Dashboard
                 </Link>
                 <UserAccountNav
-                  name={!user.name ? "Your Account" : user.name}
+                  name={
+                    !user.given_name || !user.family_name
+                      ? "Your Account"
+                      : `${user.given_name} ${user.family_name}`
+                  }
                   email={user.email ?? ""}
-                  imageUrl={user.image ?? ""}
+                  imageUrl={user.picture ?? ""}
                 />
               </>
             )}

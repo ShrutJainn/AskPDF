@@ -1,21 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
-import { NEXT_AUTH } from "@/lib/auth";
-import { getServerSession } from "next-auth";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { pinecone } from "@/lib/pinecone";
 import { PineconeStore } from "@langchain/pinecone";
 import { openai } from "@/lib/openai";
 import { OpenAIStream, StreamingTextResponse } from "ai";
 import { SendMessageValidator } from "@/lib/validators/SendMessageValidator";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
 export const POST = async (req: NextRequest) => {
   // endpoint for asking a question to a pdf file
 
   const body = await req.json();
 
-  const session = await getServerSession(NEXT_AUTH);
-  const userId = session.user.id;
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
+  const userId = user.id;
 
   if (!userId) return new Response("Unauthorized", { status: 401 });
 

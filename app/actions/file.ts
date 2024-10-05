@@ -1,8 +1,7 @@
 "use server";
 
 import { db } from "@/db";
-import { NEXT_AUTH } from "@/lib/auth";
-import { getServerSession } from "next-auth";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
 export async function getFiles(userId: string | undefined) {
   const files = await db.file.findMany({
@@ -29,9 +28,10 @@ export async function deleteFile(fileId: string | undefined) {
 }
 
 export async function getFileByKey(key: string) {
-  const session = await getServerSession(NEXT_AUTH);
-  const userId = session.user.id;
-  if (!session) throw new Error("Unauthorized");
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
+  const userId = user.id;
+  if (!userId) throw new Error("Unauthorized");
 
   const file = await db.file.findFirst({
     where: {
@@ -45,11 +45,13 @@ export async function getFileByKey(key: string) {
 }
 
 export async function getFileUploadStatus(fileId: string | undefined) {
-  const session = await getServerSession(NEXT_AUTH);
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
+  const userId = user.id;
   const file = await db.file.findFirst({
     where: {
       id: fileId,
-      userId: session.user.id,
+      userId,
     },
   });
 

@@ -2,14 +2,14 @@
 
 import { PLANS } from "@/config/stripe";
 import { db } from "@/db";
-import { NEXT_AUTH } from "@/lib/auth";
 import { getUserSubscriptionPlan, stripe } from "@/lib/stripe";
 import { absoluteUrl } from "@/lib/utils";
-import { getServerSession } from "next-auth";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
 export async function getUrl() {
-  const session = await getServerSession(NEXT_AUTH);
-  const userId = session?.user?.id;
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
+  const userId = user.id;
   if (!userId) throw new Error("Unauthorized");
 
   const billingUrl = absoluteUrl("/dashboard/billing");
@@ -35,7 +35,6 @@ export async function getUrl() {
     //   console.error(error);
     // }
   }
-
   const stripeSession = await stripe.checkout.sessions.create({
     success_url: billingUrl,
     cancel_url: billingUrl,

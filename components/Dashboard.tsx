@@ -6,11 +6,11 @@ import Link from "next/link";
 import Skeleton from "react-loading-skeleton";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
-import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { deleteFile, getFiles } from "@/app/actions/file";
 import UploadButton from "./UploadButton";
 import { getUserSubscriptionPlan } from "@/lib/stripe";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 
 enum UploadStatus {
   PENDING,
@@ -31,13 +31,12 @@ interface File {
 }
 
 interface PageProps {
-    subscriptionPlan : Awaited<ReturnType<typeof getUserSubscriptionPlan>>
+  subscriptionPlan: Awaited<ReturnType<typeof getUserSubscriptionPlan>>;
 }
 
-function Dashboard({subscriptionPlan} : PageProps) {
-  const { data: session } = useSession();
-  const userId = session?.user?.id;
-
+function Dashboard({ subscriptionPlan }: PageProps) {
+  const { user } = useKindeBrowserClient();
+  const userId = user?.id;
   const [files, setFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 

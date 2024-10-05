@@ -2,9 +2,7 @@
 
 import { INFINITE_QUERY_LIMIT } from "@/config/infinite-query";
 import { db } from "@/db";
-import { NEXT_AUTH } from "@/lib/auth";
 import { MessagePropsSchema } from "@/lib/validators/MessagePropsValidator";
-import { getServerSession } from "next-auth";
 import { z } from "zod";
 
 type MessageProps = z.infer<typeof MessagePropsSchema>;

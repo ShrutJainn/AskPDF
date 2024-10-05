@@ -1,10 +1,9 @@
 import { getFile } from "@/app/actions/file";
-import { NEXT_AUTH } from "@/lib/auth";
 import ChatWrapper from "@/components/chat/ChatWrapper";
 import PdfRenderer from "@/components/PdfRenderer";
-import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { NextRequest } from "next/server";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
 interface PageProps {
   params: {
@@ -14,9 +13,11 @@ interface PageProps {
 
 async function Page({ params }: PageProps, req: NextRequest) {
   const file = await getFile(params.fileId);
-  const session = await getServerSession(NEXT_AUTH);
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
+  const userId = user.id;
 
-  if (!session) return redirect("/api/auth");
+  if (!userId) return redirect("/api/auth");
   return (
     <div className=" flex-1 justify-between flex flex-col h-[calc(100vh-3.5rem)]">
       <div className=" mx-auto w-full max-w-7xl grow lg:flex xl:px-2">

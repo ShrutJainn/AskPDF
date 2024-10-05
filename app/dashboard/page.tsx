@@ -1,10 +1,10 @@
-import { useSession } from "next-auth/react";
+"use server";
+
 import { db } from "@/db";
 import { redirect } from "next/navigation";
 import { getUserSubscriptionPlan } from "@/lib/stripe";
 import Dashboard from "@/components/Dashboard";
-import { getServerSession } from "next-auth";
-import { NEXT_AUTH } from "@/lib/auth";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
 enum UploadStatus {
   PENDING,
@@ -25,10 +25,10 @@ interface File {
 }
 
 async function Page() {
-  const session = await getServerSession(NEXT_AUTH);
-  const userId = session?.user?.id;
-
-  if (!userId) redirect("/api/auth/signin");
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
+  const userId = user.id;
+  if (!userId) redirect("/auth-callback?origin=dashboard");
 
   const dbUser = await db.user.findFirst({
     where: {
@@ -36,11 +36,12 @@ async function Page() {
     },
   });
 
-  if (!dbUser) redirect("/api/auth/signin");
+  if (!dbUser) redirect("/auth-callback?origin=dashboard");
 
   const subscriptionPlan = await getUserSubscriptionPlan();
 
   return <Dashboard subscriptionPlan={subscriptionPlan} />;
+  // return <div>hi there</div>;
 }
 
 export default Page;
