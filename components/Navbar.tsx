@@ -4,7 +4,6 @@ import { buttonVariants } from "./ui/button";
 import { Button } from "./ui/button";
 import { ArrowRight } from "lucide-react";
 import UserAccountNav from "./UserAccountNav";
-import AuthButton from "./AuthButton";
 import MobileNav from "./MobileNav";
 import { LoginLink } from "@kinde-oss/kinde-auth-nextjs/components";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
@@ -35,7 +34,6 @@ async function Navbar() {
                 >
                   Pricing
                 </Link>
-                {/* <AuthButton type="login" /> */}
                 <LoginLink
                   className={buttonVariants({
                     variant: "ghost",

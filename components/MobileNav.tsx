@@ -1,7 +1,7 @@
 "use client";
 
+import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs";
 import { ArrowRight, Menu } from "lucide-react";
-import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -66,13 +66,12 @@ function MobileNav({ isAuth }: { isAuth: boolean }) {
                 </li>
                 <li className=" my-3 h-px w-full bg-gray-300" />
                 <li>
-                  <Link
-                    onClick={() => signOut()}
+                  <LogoutLink
                     className=" flex items-center w-full font-semibold "
                     href="/"
                   >
                     Signout
-                  </Link>
+                  </LogoutLink>
                 </li>
               </>
             )}

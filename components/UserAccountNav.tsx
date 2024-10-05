@@ -12,7 +12,7 @@ import Image from "next/image";
 import { Icons } from "./Icons";
 import Link from "next/link";
 import { Gem } from "lucide-react";
-import AuthButton from "./AuthButton";
+import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs";
 
 interface UserAccountProps {
   email: string | undefined;
@@ -71,7 +71,7 @@ async function UserAccountNav({ email, imageUrl, name }: UserAccountProps) {
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem className=" cursor-pointer">
-          <AuthButton type="signout" />
+          <LogoutLink>Log Out</LogoutLink>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
