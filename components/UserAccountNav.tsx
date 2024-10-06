@@ -8,16 +8,10 @@ import {
 } from "./ui/dropdown-menu";
 import { Button, buttonVariants } from "./ui/button";
 import { Avatar, AvatarFallback } from "./ui/avatar";
-import Image from "next/image";
 import { Icons } from "./Icons";
 import Link from "next/link";
 import { Gem } from "lucide-react";
-<<<<<<< HEAD
-import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs";
-=======
-import AuthButton from "./AuthButton";
 import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
->>>>>>> temp-branch
 
 interface UserAccountProps {
   email: string | undefined;
@@ -32,21 +26,10 @@ async function UserAccountNav({ email, imageUrl, name }: UserAccountProps) {
       <DropdownMenuTrigger asChild className=" overflow-visible">
         <Button className=" rounded-full h-8 w-8 aspect-square bg-slate-400">
           <Avatar className=" relative w-8 h-8 ">
-            {/* {imageUrl ? (
-              <div className=" relative aspect-square h-full w-full">
-                <Image
-                  fill
-                  src={imageUrl}
-                  alt="profile picture"
-                  referrerPolicy="no-referrer"
-                />
-              </div>
-            ) : ( */}
             <AvatarFallback>
               <span className=" sr-only">{name}</span>
               <Icons.user className=" h-4 w-4 text-zinc-900" />
             </AvatarFallback>
-            {/* )} */}
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
@@ -76,11 +59,6 @@ async function UserAccountNav({ email, imageUrl, name }: UserAccountProps) {
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem className=" cursor-pointer">
-<<<<<<< HEAD
-          <LogoutLink>Log Out</LogoutLink>
-=======
-          {/* <AuthButton type="signout" /> */}
-
           <LogoutLink
             className={buttonVariants({
               variant: "ghost",
@@ -89,7 +67,6 @@ async function UserAccountNav({ email, imageUrl, name }: UserAccountProps) {
           >
             Log Out
           </LogoutLink>
->>>>>>> temp-branch
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
