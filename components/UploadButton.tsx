@@ -58,7 +58,6 @@ function UploadDropzone({ isSubscribed }: { isSubscribed: boolean }) {
       onDrop={async (acceptedFile) => {
         setUploading(true);
         const progressInterval = startSimulatedProgress();
-        console.log(acceptedFile);
         const maxSize = isSubscribed ? 16000000 : 4000000;
         if (acceptedFile[0].size > maxSize) {
           clearInterval(progressInterval);

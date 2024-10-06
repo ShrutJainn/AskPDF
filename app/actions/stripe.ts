@@ -1,5 +1,3 @@
-"use server";
-
 import { PLANS } from "@/config/stripe";
 import { db } from "@/db";
 import { getUserSubscriptionPlan, stripe } from "@/lib/stripe";
@@ -25,7 +23,6 @@ export async function getUrl() {
   const subscriptionPlan = await getUserSubscriptionPlan();
   if (subscriptionPlan.isSubscribed && dbUser.stripeCustomerId) {
     // try {
-    console.log(billingUrl);
     const stripeSession = await stripe.billingPortal.sessions.create({
       customer: dbUser.stripeCustomerId,
       return_url: billingUrl,
