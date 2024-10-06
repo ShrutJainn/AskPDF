@@ -13,13 +13,13 @@ function Page() {
   useEffect(() => {
     async function syncUserAndRedirect() {
       try {
-        const data = await createUser(); // Sync user data to the database
-        console.log(data);
+        const data = await createUser();
 
         // Redirect after user sync is complete
         if (data?.success) router.push(origin ? `/${origin}` : "/dashboard");
       } catch (error) {
         console.error("Error syncing user:", error);
+        return;
       }
     }
 

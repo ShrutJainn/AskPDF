@@ -10,7 +10,6 @@ function UpgradeButton() {
     //@ts-ignore
     // const { data } = await axios.post("/api/stripe");
     const data = await getUrl();
-    console.log(data.url);
     window.location.href = data?.url ?? "/dashboard/billing";
   }
   return (
