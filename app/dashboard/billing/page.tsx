@@ -5,7 +5,8 @@ import { getUserSubscriptionPlan } from "@/lib/stripe";
 async function Page() {
   const subscriptionPlan = await getUserSubscriptionPlan();
   const data = await getUrl();
-  return <BillingForm subscriptionPlan={subscriptionPlan} url={data.url} />;
+  if (!subscriptionPlan || !data) return <p>Loading...</p>;
+  return <BillingForm subscriptionPlan={subscriptionPlan} url={data?.url} />;
 }
 
 export default Page;

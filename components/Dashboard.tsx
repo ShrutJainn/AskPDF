@@ -36,6 +36,7 @@ interface PageProps {
 
 function Dashboard({ subscriptionPlan }: PageProps) {
   const { user } = useKindeBrowserClient();
+
   const userId = user?.id;
   const [files, setFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -54,7 +55,7 @@ function Dashboard({ subscriptionPlan }: PageProps) {
 
   async function handleDeleteFile(fileId: string) {
     const res = await deleteFile(fileId);
-    const updatedFiles = files.filter((file) => file.id !== fileId);
+    const updatedFiles = files.filter((file) => file?.id !== fileId);
     setFiles(updatedFiles);
   }
   return (
@@ -76,11 +77,11 @@ function Dashboard({ subscriptionPlan }: PageProps) {
             {files.map((file) => {
               return (
                 <li
-                  key={file.id}
+                  key={file?.id}
                   className=" col-span-1 divide-y divide-gray-200 rounded-lg bg-white shadow transition hover:shadow-lg"
                 >
                   <Link
-                    href={`/dashboard/${file.id}`}
+                    href={`/dashboard/${file?.id}`}
                     className=" flex flex-col gap-2"
                     prefetch={true}
                   >
@@ -109,7 +110,7 @@ function Dashboard({ subscriptionPlan }: PageProps) {
                       size="sm"
                       className=" w-full"
                       variant="destructive"
-                      onClick={() => handleDeleteFile(file.id)}
+                      onClick={() => handleDeleteFile(file?.id)}
                       disabled={loading}
                     >
                       <Trash className=" h-4 w-4" />

@@ -25,7 +25,8 @@ interface File {
 async function Page() {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
-  const userId = user.id;
+  if (!user) return null;
+  const userId = user?.id;
   if (!userId) redirect("/auth-callback?origin=dashboard");
 
   const dbUser = await db.user.findFirst({
