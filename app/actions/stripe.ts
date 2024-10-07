@@ -7,8 +7,11 @@ import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 export async function getUrl() {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
-  const userId = user.id;
-  if (!userId) throw new Error("Unauthorized");
+  const userId = user?.id;
+  if (!userId)
+    return {
+      error: "Unauthorized",
+    };
 
   const billingUrl = absoluteUrl("/dashboard/billing");
 
@@ -18,16 +21,19 @@ export async function getUrl() {
     },
   });
 
-  if (!dbUser) throw new Error("Unauthorized");
+  if (!dbUser)
+    return {
+      error: "Unauthorized",
+    };
 
   const subscriptionPlan = await getUserSubscriptionPlan();
-  if (subscriptionPlan.isSubscribed && dbUser.stripeCustomerId) {
+  if (subscriptionPlan?.isSubscribed && dbUser?.stripeCustomerId) {
     // try {
     const stripeSession = await stripe.billingPortal.sessions.create({
-      customer: dbUser.stripeCustomerId,
+      customer: dbUser?.stripeCustomerId,
       return_url: billingUrl,
     });
-    return { url: stripeSession.url };
+    return { url: stripeSession?.url };
     // } catch (error) {
     //   console.error(error);
     // }
@@ -40,7 +46,7 @@ export async function getUrl() {
     billing_address_collection: "auto",
     line_items: [
       {
-        price: PLANS.find((plan) => plan.name === "Pro")?.price.priceId.test,
+        price: PLANS.find((plan) => plan?.name === "Pro")?.price.priceId.test,
         quantity: 1,
       },
     ],
@@ -48,5 +54,5 @@ export async function getUrl() {
       userId: userId,
     },
   });
-  return { url: stripeSession.url };
+  return { url: stripeSession?.url };
 }

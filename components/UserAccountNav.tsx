@@ -49,7 +49,7 @@ async function UserAccountNav({ email, imageUrl, name }: UserAccountProps) {
           <Link href="/dashboard">Dashboard</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          {subscriptionPlan.isSubscribed ? (
+          {subscriptionPlan?.isSubscribed ? (
             <Link href="/dashboard/billing">Manage Subscription</Link>
           ) : (
             <Link href="/pricing">

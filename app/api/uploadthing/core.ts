@@ -62,7 +62,7 @@ const onUploadComplete = async ({
     const pagesAmt = pageLevelDocs.length; // number of pages in pdf
 
     const { subscriptionPlan } = metadata;
-    const { isSubscribed } = subscriptionPlan;
+    const isSubscribed = subscriptionPlan?.isSubscribed;
 
     const isProLimitExceeded =
       pagesAmt > PLANS.find((plan) => plan.name === "Pro")!.pagesPerPdf;

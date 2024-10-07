@@ -2,13 +2,11 @@
 
 import { ArrowRight } from "lucide-react";
 import { Button } from "./ui/button";
-import axios from "axios";
 import { getUrl } from "@/app/actions/stripe";
 
 function UpgradeButton() {
   async function handleClick() {
     //@ts-ignore
-    // const { data } = await axios.post("/api/stripe");
     const data = await getUrl();
     window.location.href = data?.url ?? "/dashboard/billing";
   }

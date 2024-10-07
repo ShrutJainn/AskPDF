@@ -17,7 +17,7 @@ import { format } from "date-fns";
 
 interface BillingFormProps {
   subscriptionPlan: Awaited<ReturnType<typeof getUserSubscriptionPlan>>;
-  url: string | null;
+  url: string | null | undefined;
 }
 function BillingForm({ subscriptionPlan, url }: BillingFormProps) {
   const [loading, setLoading] = useState(false);
@@ -44,8 +44,8 @@ function BillingForm({ subscriptionPlan, url }: BillingFormProps) {
           <CardHeader>
             <CardTitle>Subscription Plan</CardTitle>
             <CardDescription>
-              You are currently on the <strong>{subscriptionPlan.name} </strong>{" "}
-              plan.{" "}
+              You are currently on the{" "}
+              <strong>{subscriptionPlan?.name} </strong> plan.{" "}
             </CardDescription>
           </CardHeader>
           <CardFooter className=" flx flex-col items-start space-y-2 md:flex-row md:justify-between md:space-x-0">
@@ -53,17 +53,20 @@ function BillingForm({ subscriptionPlan, url }: BillingFormProps) {
               {loading ? (
                 <Loader2 className=" mr-4 h-4 w-4 animate-spin" />
               ) : null}
-              {subscriptionPlan.isSubscribed
+              {subscriptionPlan?.isSubscribed
                 ? "Manage Subscription"
                 : "Upgrade to Pro"}
             </Button>
 
-            {subscriptionPlan.isSubscribed ? (
+            {subscriptionPlan?.isSubscribed ? (
               <p className=" rounded-full text-xs font-medium">
-                {subscriptionPlan.isCanceled
+                {subscriptionPlan?.isCanceled
                   ? "Your plan will be cancelled on "
                   : "Your plan renews on "}
-                {format(subscriptionPlan.stripeCurrentPeriodEnd!, "dd.MM.yyyy")}
+                {format(
+                  subscriptionPlan?.stripeCurrentPeriodEnd!,
+                  "dd.MM.yyyy"
+                )}
                 .
               </p>
             ) : null}
