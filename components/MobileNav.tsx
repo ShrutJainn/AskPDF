@@ -7,7 +7,6 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 function MobileNav({ isAuth }: { isAuth: boolean }) {
-  console.log(isAuth);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const toggleOpen = () => setIsOpen((prev) => !prev);
 
