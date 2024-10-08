@@ -20,7 +20,7 @@ async function Navbar() {
           </Link>
 
           {/* "!!" converts user object to boolean */}
-          <MobileNav isAuth={!!user} />
+          <MobileNav isAuth={user ? true : false} />
 
           <div className=" hidden items-center space-x-4 sm:flex">
             {!user ? (

@@ -1,3 +1,5 @@
+"use server";
+
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { PLANS } from "@/config/stripe";
 import { cn } from "@/lib/utils";

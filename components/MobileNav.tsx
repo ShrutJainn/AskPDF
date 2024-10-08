@@ -1,12 +1,13 @@
 "use client";
 
-import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs";
+import { LoginLink, LogoutLink } from "@kinde-oss/kinde-auth-nextjs";
 import { ArrowRight, Menu } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 function MobileNav({ isAuth }: { isAuth: boolean }) {
+  console.log(isAuth);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const toggleOpen = () => setIsOpen((prev) => !prev);
 
@@ -34,13 +35,12 @@ function MobileNav({ isAuth }: { isAuth: boolean }) {
             {!isAuth ? (
               <>
                 <li>
-                  <Link
+                  <LoginLink
                     onClick={() => closeOnCurrent("/api/auth/signin")}
                     className=" flex items-center w-full font-semibold text-green-600"
-                    href="/api/auth/signin"
                   >
                     Get started <ArrowRight className=" ml-2 h-5 w-5" />
-                  </Link>
+                  </LoginLink>
                 </li>
                 <li className=" my-3 h-px w-full bg-gray-300" />
                 <li>
@@ -66,10 +66,7 @@ function MobileNav({ isAuth }: { isAuth: boolean }) {
                 </li>
                 <li className=" my-3 h-px w-full bg-gray-300" />
                 <li>
-                  <LogoutLink
-                    className=" flex items-center w-full font-semibold "
-                    href="/"
-                  >
+                  <LogoutLink className=" flex items-center w-full font-semibold ">
                     Signout
                   </LogoutLink>
                 </li>
