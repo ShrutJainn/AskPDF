@@ -1,3 +1,5 @@
+"use server";
+
 import { PLANS } from "@/config/stripe";
 import { db } from "@/db";
 import { getUserSubscriptionPlan, stripe } from "@/lib/stripe";
